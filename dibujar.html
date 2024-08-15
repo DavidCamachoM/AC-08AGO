@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,15 +21,9 @@
         }
 
         @keyframes gradientBackground {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         #controls {
@@ -42,7 +35,7 @@
             z-index: 10;
         }
 
-        select, button, input[type="color"] {
+        select, button, input[type="color"], input[type="range"] {
             padding: 10px 20px;
             font-size: 16px;
             border-radius: 5px;
@@ -54,7 +47,7 @@
             z-index: 10;
         }
 
-        select:hover, button:hover, input[type="color"]:hover {
+        select:hover, button:hover, input[type="color"]:hover, input[type="range"]:hover {
             background-color: #555;
         }
 
@@ -73,6 +66,17 @@
             z-index: 10;
         }
 
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-label {
+            font-size: 14px;
+            color: #f1f1f1;
+        }
+
         #background-animation {
             position: absolute;
             top: 0;
@@ -85,7 +89,6 @@
         }
     </style>
 </head>
-
 <body>
     <h1 class="title">Canvas Drawing Tool</h1>
     <div id="controls">
@@ -100,9 +103,14 @@
         <input type="color" id="color" value="#ff0000">
         <button id="clear">Clear Canvas</button>
     </div>
+    <div id="transform-controls" class="slider-container">
+        <div class="slider-label">Scale:</div>
+        <input type="range" id="scale" min="0.5" max="2" step="0.1" value="1">
+        <div class="slider-label">Rotation:</div>
+        <input type="range" id="rotation" min="0" max="360" step="1" value="0">
+    </div>
     <canvas id="canvas" width="800" height="600"></canvas>
     <canvas id="background-animation"></canvas>
     <script src="script.js"></script>
 </body>
-
 </html>
