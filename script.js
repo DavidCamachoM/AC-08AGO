@@ -13,6 +13,10 @@ let currentShape = 'rectangle';
 let currentColor = '#ff0000';
 let shapes = [];
 
+// Controles deslizantes para la transformación
+const scaleInput = document.getElementById('scale');
+const rotationInput = document.getElementById('rotation');
+
 shapeSelect.addEventListener('change', (e) => {
     currentShape = e.target.value;
 });
@@ -37,36 +41,52 @@ function createShape(type, x, y, color) {
         x,
         y,
         color,
-        opacity: Math.random() * 0.5 + 0.5, // Opacidad aleatoria entre 0.5 y 1
-        fadeSpeed: Math.random() * 0.02 + 0.01 // Velocidad de desvanecimiento
+        scale: parseFloat(scaleInput.value),
+        rotation: parseFloat(rotationInput.value) * Math.PI / 180,
+        opacity: Math.random() * 0.5 + 0.5
     };
 }
 
 function drawShapes() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     shapes.forEach((shape) => {
-        ctx.beginPath();
+        ctx.save();
         ctx.globalAlpha = shape.opacity;
         ctx.fillStyle = shape.color;
         ctx.strokeStyle = shape.color;
         ctx.lineWidth = 3;
-        
+
+        // Aplicar la transformación
+        ctx.translate(shape.x, shape.y);
+        ctx.rotate(shape.rotation);
+        ctx.scale(shape.scale, shape.scale);
+
         if (shape.type === 'rectangle') {
-            ctx.roundRect(shape.x, shape.y, 120, 60, 10);
+            ctx.beginPath();
+            ctx.roundRect(-60, -30, 120, 60, 10); // Ajuste para el centro
+            ctx.fill();
+            ctx.stroke();
         } else if (shape.type === 'circle') {
-            ctx.arc(shape.x, shape.y, 50, 0, Math.PI * 2);
+            ctx.beginPath();
+            ctx.arc(0, 0, 50, 0, Math.PI * 2); // Centro en (0,0)
+            ctx.fill();
+            ctx.stroke();
         } else if (shape.type === 'triangle') {
-            ctx.moveTo(shape.x, shape.y);
-            ctx.lineTo(shape.x + 80 / 2, shape.y + 80);
-            ctx.lineTo(shape.x - 80 / 2, shape.y + 80);
+            ctx.beginPath();
+            ctx.moveTo(-40, -40);
+            ctx.lineTo(40, -40);
+            ctx.lineTo(0, 40);
             ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
         } else if (shape.type === 'star') {
-            drawStar(ctx, shape.x, shape.y, 60);
+            ctx.beginPath();
+            drawStar(ctx, 0, 0, 60);
+            ctx.fill();
+            ctx.stroke();
         }
-        
-        ctx.fill();
-        ctx.stroke();
-        ctx.globalAlpha = 1; // Resetear opacidad para otras formas
+
+        ctx.restore();
     });
 }
 
@@ -112,17 +132,18 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, ra
     return this;
 };
 
-let bgShapes = [];
+// Fondo animado
+const bgShapes = [];
+const bgColors = ['rgba(255, 77, 77, 0.2)', 'rgba(77, 255, 77, 0.2)', 'rgba(77, 77, 255, 0.2)', 'rgba(255, 255, 77, 0.2)'];
 
 function createBgShapes() {
-    const colors = ['rgba(255, 77, 77, 0.2)', 'rgba(77, 255, 77, 0.2)', 'rgba(77, 77, 255, 0.2)', 'rgba(255, 255, 77, 0.2)'];
     for (let i = 0; i < 30; i++) {
         const x = Math.random() * backgroundCanvas.width;
         const y = Math.random() * backgroundCanvas.height;
         const radius = Math.random() * 50 + 30;
         const dx = (Math.random() - 0.5) * 2;
         const dy = (Math.random() - 0.5) * 2;
-        const color = colors[Math.floor(Math.random() * colors.length)];
+        const color = bgColors[Math.floor(Math.random() * bgColors.length)];
 
         bgShapes.push({ x, y, radius, dx, dy, color });
     }
